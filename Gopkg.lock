@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:bce8a8c7289c6c5e23423799b905c3e8f2d532117c3778a45592bdc095cf5c83"
+  name = "github.com/opentracing-contrib/go-stdlib"
+  packages = ["nethttp"]
+  pruneopts = "UT"
+  revision = "cf7a6c988dc994e945d2715565026f3cc8718689"
+
+[[projects]]
   digest = "1:11e62d6050198055e6cd87ed57e5d8c669e84f839c16e16f192374d913d1a70d"
   name = "github.com/opentracing/opentracing-go"
   packages = [
@@ -59,7 +67,10 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/opentracing-contrib/go-stdlib/nethttp",
     "github.com/opentracing/opentracing-go",
+    "github.com/opentracing/opentracing-go/ext",
+    "github.com/opentracing/opentracing-go/log",
     "github.com/uber/jaeger-client-go",
     "github.com/uber/jaeger-client-go/config",
   ]
