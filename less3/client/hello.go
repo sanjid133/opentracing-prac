@@ -9,11 +9,14 @@ import (
 	"net/url"
 	"net/http"
 	xhttp "github.com/sanjid133/opentracing-go/util/http"
+	"github.com/opentracing/opentracing-go/ext"
 )
 
 func formatString(ctx context.Context, name string) string {
 	span,  _:= opentracing.StartSpanFromContext(ctx, "formatString")
 	defer span.Finish()
+
+	ext.SpanKindRPCClient.Set(span)
 
 	v := url.Values{}
 	v.Set("name", name)
@@ -22,6 +25,15 @@ func formatString(ctx context.Context, name string) string {
 	if err != nil {
 		panic(err)
 	}
+
+	ext.HTTPUrl.Set(span, url)
+	ext.HTTPMethod.Set(span, "GET")
+	span.Tracer().Inject(
+		span.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req.Header),
+	)
+
 	resp, err := xhttp.Do(req)
 	if err != nil {
 		panic(err)
@@ -39,6 +51,8 @@ func printHello(ctx context.Context, str string)  {
 	span, _ := opentracing.StartSpanFromContext(ctx, "printHello")
 	defer span.Finish()
 
+	ext.SpanKindRPCClient.Set(span)
+
 	v := url.Values{}
 	v.Set("str", str)
 	url := "http://localhost:8082/publish?"+v.Encode()
@@ -46,6 +60,15 @@ func printHello(ctx context.Context, str string)  {
 	if err != nil {
 		panic(err)
 	}
+
+	ext.HTTPUrl.Set(span, url)
+	ext.HTTPMethod.Set(span, "GET")
+	span.Tracer().Inject(
+		span.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req.Header),
+	)
+
 	_, err = xhttp.Do(req)
 	if err != nil {
 		panic(err)
